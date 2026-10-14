@@ -1,0 +1,233 @@
+{
+  "nodes": {
+    "flake-lib": {
+      "inputs": {
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791913510,
+        "narHash": "sha256-64LPsUeCeJGPJ9iMqlkVyB/uxxsgXk0iHlAEgiwkpao=",
+        "owner": "jgus-org",
+        "repo": "flake-lib",
+        "rev": "dc3f1a14f6e8528de6b27685aae49b1a68e1f0db",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgus-org",
+        "ref": "v1",
+        "repo": "flake-lib",
+        "type": "github"
+      }
+    },
+    "flake-utils": {
+      "inputs": {
+        "systems": "systems"
+      },
+      "locked": {
+        "lastModified": 1731533236,
+        "narHash": "sha256-l0KFg5HjrsfsO/JpG+r7fRrqm12kzFHyUHqHCVpMMbI=",
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "rev": "11707dc2f618dd54ca8739b309ec4fc024de578b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "numtide",
+        "repo": "flake-utils",
+        "type": "github"
+      }
+    },
+    "freeimage-re": {
+      "inputs": {
+        "flake-lib": [
+          "flake-lib"
+        ],
+        "flake-utils": [
+          "flake-utils"
+        ],
+        "libjpeg-turbo-src": "libjpeg-turbo-src",
+        "libtiff-src": "libtiff-src",
+        "libwebp-src": "libwebp-src",
+        "nixpkgs": [
+          "nixpkgs"
+        ],
+        "yato-src": "yato-src"
+      },
+      "locked": {
+        "lastModified": 1791943176,
+        "narHash": "sha256-w52aDyl/1nExq/PXjrCk9Ew51ybY6oJ95gCazR0YCYU=",
+        "owner": "jgus-org",
+        "repo": "freeimage-re-flake",
+        "rev": "6fa79f467711a5cc5c77d024b86959c5df59b6bc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgus-org",
+        "repo": "freeimage-re-flake",
+        "type": "github"
+      }
+    },
+    "libjpeg-turbo-src": {
+      "inputs": {
+        "flake-lib": [
+          "freeimage-re",
+          "flake-lib"
+        ],
+        "flake-utils": [
+          "freeimage-re",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "freeimage-re",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791928363,
+        "narHash": "sha256-y68wRGTQFdoehA4sfelz8J7ObOAurOwq0fMCRXMOZGk=",
+        "owner": "jgus-org",
+        "repo": "libjpeg-turbo-src-flake",
+        "rev": "71a2fe173c992ce87559f2744d9db57fce47abea",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgus-org",
+        "repo": "libjpeg-turbo-src-flake",
+        "type": "github"
+      }
+    },
+    "libtiff-src": {
+      "inputs": {
+        "flake-lib": [
+          "freeimage-re",
+          "flake-lib"
+        ],
+        "flake-utils": [
+          "freeimage-re",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "freeimage-re",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791929890,
+        "narHash": "sha256-XwTIDIULyUEPO0baAfN1gss9UG8eU3u5+AQgs0H6e2E=",
+        "owner": "jgus-org",
+        "repo": "libtiff-src-flake",
+        "rev": "e72169d3552c8c0d20f0422f7723ab417c42b001",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgus-org",
+        "repo": "libtiff-src-flake",
+        "type": "github"
+      }
+    },
+    "libwebp-src": {
+      "inputs": {
+        "flake-lib": [
+          "freeimage-re",
+          "flake-lib"
+        ],
+        "flake-utils": [
+          "freeimage-re",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "freeimage-re",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791928424,
+        "narHash": "sha256-ipouSSjJHiAaA9vkskH6qkjd8HAD8N+T017jq8Wm658=",
+        "owner": "jgus-org",
+        "repo": "libwebp-src-flake",
+        "rev": "d22ae17a665164e0d3bf2046a100815d88f8982c",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgus-org",
+        "repo": "libwebp-src-flake",
+        "type": "github"
+      }
+    },
+    "nixpkgs": {
+      "locked": {
+        "lastModified": 1782691344,
+        "narHash": "sha256-i5nw9BYYsMDAaOC4J+JmTof6b2GhlyH076awYRNrTV8=",
+        "owner": "NixOS",
+        "repo": "nixpkgs",
+        "rev": "1f01958ffb5b3545c96d9ef2f4e24c5e5e1eb846",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NixOS",
+        "ref": "nixos-26.05",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
+    "root": {
+      "inputs": {
+        "flake-lib": "flake-lib",
+        "flake-utils": "flake-utils",
+        "freeimage-re": "freeimage-re",
+        "nixpkgs": "nixpkgs"
+      }
+    },
+    "systems": {
+      "locked": {
+        "lastModified": 1681028828,
+        "narHash": "sha256-Vy1rq5AaRuLzOxct8nz4T6wlgyUR7zLU309k9mBC768=",
+        "owner": "nix-systems",
+        "repo": "default",
+        "rev": "da67096a3b9bf56a91d16901293e51ba5b49a27e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nix-systems",
+        "repo": "default",
+        "type": "github"
+      }
+    },
+    "yato-src": {
+      "inputs": {
+        "flake-lib": [
+          "freeimage-re",
+          "flake-lib"
+        ],
+        "flake-utils": [
+          "freeimage-re",
+          "flake-utils"
+        ],
+        "nixpkgs": [
+          "freeimage-re",
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1791929966,
+        "narHash": "sha256-yUrBzgusv/na0un0qnQfTyklTmp88o3fVraaYq54bQ0=",
+        "owner": "jgus-org",
+        "repo": "yato-src-flake",
+        "rev": "51fd72bc74a2e3777a7839d2e07715cc6beb731d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "jgus-org",
+        "repo": "yato-src-flake",
+        "type": "github"
+      }
+    }
+  },
+  "root": "root",
+  "version": 7
+}

@@ -1,0 +1,29 @@
+FreeImageRe renamed the classic RGBQUAD pixel struct to FIRGBA8 (fields red/green/blue/alpha) and FreeImage_GetPixelColor now takes FIRGBA8*. Adapt the scraper's empty-image check to the renamed type and fields.
+
+diff --git a/es-app/src/scrapers/Scraper.cpp b/es-app/src/scrapers/Scraper.cpp
+--- a/es-app/src/scrapers/Scraper.cpp
++++ b/es-app/src/scrapers/Scraper.cpp
+@@ -488,8 +488,8 @@
+             emptyImage = true;
+
+             FIBITMAP* tempImage {FreeImage_LoadFromMemory(imageFormat, memoryStream)};
+-            RGBQUAD firstPixel;
+-            RGBQUAD currPixel;
++            FIRGBA8 firstPixel;
++            FIRGBA8 currPixel;
+
+             unsigned int width {FreeImage_GetWidth(tempImage)};
+             unsigned int height {FreeImage_GetHeight(tempImage)};
+@@ -518,9 +518,9 @@
+                     // Skip the last line as well.
+                     for (unsigned int y {1}; y < height - 1; ++y) {
+                         FreeImage_GetPixelColor(tempImage, x, y, &currPixel);
+-                        if (currPixel.rgbBlue != firstPixel.rgbBlue ||
+-                            currPixel.rgbGreen != firstPixel.rgbGreen ||
+-                            currPixel.rgbRed != firstPixel.rgbRed) {
++                        if (currPixel.blue != firstPixel.blue ||
++                            currPixel.green != firstPixel.green ||
++                            currPixel.red != firstPixel.red) {
+                             emptyImage = false;
+                             break;
+                         }
