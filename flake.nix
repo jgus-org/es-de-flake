@@ -4,6 +4,10 @@
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
     flake-utils.url = "github:numtide/flake-utils";
+    treefmt-nix = {
+      url = "github:numtide/treefmt-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     flake-lib = {
       url = "github:jgus-org/flake-lib/v1";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -21,6 +25,7 @@
       self,
       nixpkgs,
       flake-utils,
+      treefmt-nix,
       flake-lib,
       freeimage-for-es-de,
     }:
@@ -38,6 +43,11 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         inherit (pkgs) lib stdenv;
+
+        treefmtEval = treefmt-nix.lib.evalModule pkgs {
+          projectRootFile = "flake.nix";
+          programs.nixfmt.enable = true;
+        };
 
         es-de = stdenv.mkDerivation (finalAttrs: {
           pname = "emulationstation-de";
@@ -114,6 +124,9 @@
         };
       in
       {
+        formatter = treefmtEval.config.build.wrapper;
+
+        checks.formatting = treefmtEval.config.build.check self;
         checks.modern-es-de-covers = modern-es-de-covers;
         packages = {
           inherit es-de modern-es-de-covers;
