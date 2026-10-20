@@ -109,8 +109,6 @@
 
         updateVersion = flake-lib.lib.mkUpdateVersion {
           inherit pkgs source;
-          buildAttr = "modern-es-de-covers";
-          verification = "build";
         };
       in
       {
