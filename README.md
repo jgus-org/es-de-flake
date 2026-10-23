@@ -8,14 +8,14 @@ nix run github:jgus-org/es-de-flake
 
 ## Outputs
 
-| Output | Contents |
-| --- | --- |
-| `packages.<system>.es-de` | The frontend |
-| `packages.<system>.default` | The same build |
+| Output                                  | Contents                                                                                                                                                                                                                                     |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages.<system>.es-de`               | The frontend                                                                                                                                                                                                                                 |
+| `packages.<system>.default`             | The same build                                                                                                                                                                                                                               |
 | `packages.<system>.modern-es-de-covers` | A `UserThemeDirectory` built from the `Modern` theme shipped with this exact build: renamed `Modern (box art)`, with its artwork view reading `cover, screenshot` so box art takes precedence and a screenshot serves when a system has none |
-| `packages.<system>.update-version` | Rewrites `pin.nix` for a chosen upstream release and verifies the theme artifact |
-| `packages.<system>.update-branches` | Ensures one exact branch per tracked release |
-| `checks.<system>.modern-es-de-covers` | The same theme artifact, as a check |
+| `packages.<system>.update-version`      | Rewrites `pin.nix` for a chosen upstream release and verifies the theme artifact                                                                                                                                                             |
+| `packages.<system>.update-branches`     | Ensures one exact branch per tracked release                                                                                                                                                                                                 |
+| `checks.<system>.modern-es-de-covers`   | The same theme artifact, as a check                                                                                                                                                                                                          |
 
 `es-de` is built with upstream's application updater disabled, so upgrades come from the flake rather than from the running frontend.
 

@@ -2,35 +2,33 @@
   description = "ES-DE (EmulationStation Desktop Edition), an emulator frontend built from its upstream GitLab releases against a pinned freeimage-for-es-de build.";
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    flake-lib.url = "github:jgus-org/flake-lib/v1";
     flake-utils.url = "github:numtide/flake-utils";
-    flake-lib = {
-      url = "github:jgus-org/flake-lib/v1";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
-    };
     freeimage-for-es-de = {
+      inputs = {
+        flake-utils.follows = "flake-utils";
+        nixpkgs.follows = "nixpkgs";
+      };
       url = "github:jgus-org/freeimage-for-es-de-flake";
-      inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follows = "flake-utils";
     };
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
   };
 
   outputs =
     {
       self,
-      nixpkgs,
-      flake-utils,
       flake-lib,
+      flake-utils,
       freeimage-for-es-de,
+      nixpkgs,
     }:
     let
       pin = import ./pin.nix;
       source = {
-        type = "gitlab";
         owner = "es-de";
         repo = "emulationstation-de";
         track = "release";
+        type = "gitlab";
       };
     in
     flake-utils.lib.eachDefaultSystem (
@@ -39,29 +37,12 @@
         pkgs = nixpkgs.legacyPackages.${system};
         inherit (pkgs) lib stdenv;
 
+        orgFormatting = flake-lib.lib.mkFormatting {
+          inherit self system;
+        };
+
         es-de = stdenv.mkDerivation (finalAttrs: {
-          pname = "emulationstation-de";
           inherit (pin) version;
-
-          src = pkgs.fetchgit {
-            url = "https://gitlab.com/${source.owner}/${source.repo}.git";
-            rev = pin.sourceRev;
-            hash = pin.sourceHash;
-            fetchSubmodules = false;
-          };
-
-          # GET_PREREQUISITES runs the host's ldd against the poppler library to bake its prerequisites in; it fails under the sandbox and is unneeded.
-          postPatch = ''
-            substituteInPlace CMake/Packages/FindPoppler.cmake \
-              --replace-fail 'GET_PREREQUISITES("''${POPPLER_LIBRARY}" POPPLER_PREREQS 1 0 "" "")' ""
-          '';
-
-          nativeBuildInputs = with pkgs; [
-            cmake
-            gettext
-            pkg-config
-          ];
-
           buildInputs =
             (with pkgs; [
               alsa-lib
@@ -78,15 +59,30 @@
               SDL2
             ])
             ++ [ freeimage-for-es-de.packages.${system}.freeimage-for-es-de ];
-
           cmakeFlags = [ (lib.cmakeBool "APPLICATION_UPDATER" false) ];
-
           meta = {
             description = "Emulator frontend for browsing and launching games from a unified interface";
             homepage = "https://es-de.org";
             license = lib.licenses.mit;
-            platforms = lib.platforms.linux;
             mainProgram = "es-de";
+            platforms = lib.platforms.linux;
+          };
+          nativeBuildInputs = with pkgs; [
+            cmake
+            gettext
+            pkg-config
+          ];
+          pname = "emulationstation-de";
+          # GET_PREREQUISITES runs the host's ldd against the poppler library to bake its prerequisites in; it fails under the sandbox and is unneeded.
+          postPatch = ''
+            substituteInPlace CMake/Packages/FindPoppler.cmake \
+              --replace-fail 'GET_PREREQUISITES("''${POPPLER_LIBRARY}" POPPLER_PREREQS 1 0 "" "")' ""
+          '';
+          src = pkgs.fetchgit {
+            fetchSubmodules = false;
+            hash = pin.sourceHash;
+            rev = pin.sourceRev;
+            url = "https://gitlab.com/${source.owner}/${source.repo}.git";
           };
         });
 
@@ -112,10 +108,18 @@
         };
       in
       {
-        checks.modern-es-de-covers = modern-es-de-covers;
+        checks = {
+          formatting = orgFormatting.check;
+          modern-es-de-covers = modern-es-de-covers;
+        };
+        formatter = orgFormatting.formatter;
         packages = {
           inherit es-de modern-es-de-covers;
           default = es-de;
+          update-branches = flake-lib.lib.mkUpdateBranches {
+            inherit pkgs source;
+            pinSchema = "github";
+          };
           update-version = pkgs.writeShellApplication {
             name = "update-version";
             runtimeInputs = [ pkgs.nix ];
@@ -124,10 +128,6 @@
               # The shared updater only evaluates when the source is unchanged; verify theme compatibility on that path too.
               nix build --no-link "''${FLAKE_ROOT:-$PWD}#modern-es-de-covers"
             '';
-          };
-          update-branches = flake-lib.lib.mkUpdateBranches {
-            inherit pkgs source;
-            pinSchema = "github";
           };
         };
       }
