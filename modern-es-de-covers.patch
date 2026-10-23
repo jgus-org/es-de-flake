@@ -1,0 +1,22 @@
+--- a/theme.xml
++++ b/theme.xml
+@@ -483,7 +483,7 @@
+                 <pos>0.4985 0.365</pos>
+                 <maxSize>0.277 0.39</maxSize>
+                 <origin>0.5 0.5</origin>
+-                <imageType>image</imageType>
++                <imageType>cover, screenshot</imageType>
+                 <scrollFadeIn>true</scrollFadeIn>
+             </image>
+         </view>
+--- a/capabilities.xml
++++ b/capabilities.xml
+@@ -3,7 +3,7 @@
+ -->
+ 
+ <themeCapabilities>
+-    <themeName>Modern</themeName>
++    <themeName>Modern (box art)</themeName>
+ 
+     <language>en_US</language>
+     <language>en_GB</language>
