@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792729364,
-        "narHash": "sha256-Nk21MTKMLLYcRC45pNJkOJTtW8x+/XNuWcGPkP0iE1c=",
+        "lastModified": 1792867002,
+        "narHash": "sha256-yw6wcxB5v8+/tTDf4ss9bwvMW0BitnWMvZY8RyWwlgg=",
         "owner": "jgus-org",
         "repo": "freeimage-for-es-de-flake",
-        "rev": "4742cdc8d0e4cd116af4bebf0440d576172800af",
+        "rev": "401de8375ffba9ebc4477b610fb24b59a2aef389",
         "type": "github"
       },
       "original": {
