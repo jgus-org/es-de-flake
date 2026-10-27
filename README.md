@@ -4,25 +4,35 @@ A Nix flake that builds [ES-DE](https://es-de.org) (EmulationStation Desktop Edi
 
 ## Outputs
 
-| Attribute                      | What you get                                                                                                                                                                                                |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `packages.default`             | `bin/es-de` with its data under `share/es-de`, including the themes it ships.                                                                                                                               |
-| `packages.es-de`               | The same package under its own name.                                                                                                                                                                        |
-| `packages.modern-es-de-covers` | A user theme directory holding one theme, `modern-es-de-covers`, listed in ES-DE as **Modern (box art)**: the bundled Modern theme with the game image preferring box art and falling back to a screenshot. |
-| `checks.modern-es-de-covers`   | Builds that theme, which is how its fit to this ES-DE version is checked.                                                                                                                                   |
+| Attribute          | What you get                                                                                                                              |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `overlays.default` | Adds `es-de` and `modern-es-de-covers` to the nixpkgs package set it is applied to.                                                       |
+| `packages.default` | The upstream source at the revision `pin.nix` selects. It is the fetched tree, not a build of ES-DE; ES-DE itself comes from the overlay. |
+
+## Consuming
+
+Apply the overlay to a package set that permits unfree packages, and take the two attributes from that set:
+
+```nix
+pkgs = import nixpkgs {
+  inherit system;
+  config.allowUnfree = true;
+  overlays = [ es-de.overlays.default ];
+};
+```
+
+`nixpkgs.config.allowUnfreePredicate` matching these two packages takes the allowance just as well. The instantiating set is the one that grants it; this flake takes none, so nixpkgs refuses to evaluate either package in a set that permits no unfree packages.
+
+- `pkgs.es-de` is `bin/es-de` with its data under `share/es-de`, including the themes it ships.
+- `pkgs.modern-es-de-covers` is a user theme directory holding one theme, `modern-es-de-covers`, listed in ES-DE as **Modern (box art)**: the bundled Modern theme with the game image preferring box art and falling back to a screenshot.
 
 Published for `x86_64-linux` and `aarch64-linux`; ES-DE itself builds for Linux only.
-
-```sh
-nix build .#default
-nix build .#modern-es-de-covers
-```
 
 ## Requirements and notes
 
 - ES-DE takes the machine over: it runs fullscreen under SDL2, needs a display server, and reads controllers from `/dev/input`. It is not usable headless.
 - Configuration, collections and gamelist metadata live in the user's ES-DE directory, `~/.config/emulationstation-de` by default. Emulators and ROM paths are yours to declare; the build ships no controller configuration or game metadata.
 - The application updater is not compiled in: this build performs no update check and offers none.
-- To use the theme variant, set ES-DE's `UserThemeDirectory` to the path of `packages.modern-es-de-covers` and choose `modern-es-de-covers` as the theme. It is derived from the themes of this exact ES-DE build and verified against nothing else, so take the two from the same revision.
+- To use the theme variant, set ES-DE's `UserThemeDirectory` to the path of `modern-es-de-covers` and choose `modern-es-de-covers` as the theme. It is derived from the themes of this exact ES-DE build and verified against nothing else, so take the two from the same revision.
 
 See [LICENSE.md](LICENSE.md) for licensing and copyright, and [NOTICE.md](NOTICE.md) for the terms of upstream and distributed artifacts.
