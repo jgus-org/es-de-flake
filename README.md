@@ -24,4 +24,5 @@ nix build .#modern-es-de-covers
 - Configuration, collections and gamelist metadata live in the user's ES-DE directory, `~/.config/emulationstation-de` by default. Emulators and ROM paths are yours to declare; the build ships no controller configuration or game metadata.
 - The application updater is not compiled in: this build performs no update check and offers none.
 - To use the theme variant, set ES-DE's `UserThemeDirectory` to the path of `packages.modern-es-de-covers` and choose `modern-es-de-covers` as the theme. It is derived from the themes of this exact ES-DE build and verified against nothing else, so take the two from the same revision.
-- MIT, as upstream.
+
+See [LICENSE.md](LICENSE.md) for licensing and copyright, and [NOTICE.md](NOTICE.md) for the terms of upstream and distributed artifacts.
