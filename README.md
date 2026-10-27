@@ -11,7 +11,14 @@ A Nix flake that builds [ES-DE](https://es-de.org) (EmulationStation Desktop Edi
 
 ## Consuming
 
-Apply the overlay to a package set that permits unfree packages, and take the two attributes from that set:
+Apply the overlay to the package set that runs ES-DE — the set whose `nixpkgs.config` already decides what unfree software this machine installs — and take the two attributes from it. On NixOS that is the machine's own set, so the overlay goes in `nixpkgs.overlays` and no second package set is built:
+
+```nix
+nixpkgs.overlays = [ es-de.overlays.default ];
+# …and `pkgs.es-de` beside the packages the rest of the configuration takes from `pkgs`.
+```
+
+A consumer with no package set of its own instantiates one:
 
 ```nix
 pkgs = import nixpkgs {
