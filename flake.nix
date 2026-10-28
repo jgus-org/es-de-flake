@@ -48,15 +48,15 @@
           # consumer of the overlay still carries their own.
           overlay-payload =
             let
-              smoke = import nixpkgs {
+              checkPkgs = import nixpkgs {
                 inherit system;
                 config.allowUnfree = true;
                 overlays = [ self.overlays.default ];
               };
             in
-            smoke.runCommand "es-de-overlay-payload" { } ''
-              test -x ${smoke.es-de}/bin/es-de
-              test -d ${smoke.modern-es-de-covers}/modern-es-de-covers
+            checkPkgs.runCommand "es-de-overlay-payload" { } ''
+              test -x ${checkPkgs.es-de}/bin/es-de
+              test -d ${checkPkgs.modern-es-de-covers}/modern-es-de-covers
               touch $out
             '';
         };
