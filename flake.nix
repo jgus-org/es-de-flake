@@ -28,20 +28,48 @@
         track = "release";
         type = "gitlab";
       };
-      upstreamSource = {
-        fetchSubmodules = false;
-        hash = pin.sourceHash;
-        rev = pin.sourceRev;
-        url = "https://gitlab.com/${source.owner}/${source.repo}.git";
-      };
-
+    in
+    flake-lib.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        orgFormatting = flake-lib.lib.mkFormatting {
+          inherit self system;
+        };
+      in
+      {
+        checks.formatting = orgFormatting.check;
+        formatter = orgFormatting.formatter;
+        packages = {
+          # `update-version` evaluates `packages.default` on every run and the branch publisher
+          # builds it, so a bump needs a target here; the published packages cannot be
+          # instantiated in this flake without a permit. Realizing the pinned source is what a
+          # bump actually rewrites, so that is what this verifies.
+          default = pkgs.fetchgit {
+            fetchSubmodules = false;
+            hash = pin.sourceHash;
+            rev = pin.sourceRev;
+            url = "https://gitlab.com/${source.owner}/${source.repo}.git";
+          };
+          update-branches = flake-lib.lib.mkUpdateBranches {
+            inherit pkgs source;
+            minimumTrackingVersion = "3.4.0";
+            pinSchema = "github";
+          };
+          update-version = flake-lib.lib.mkUpdateVersion {
+            inherit pkgs source;
+          };
+        };
+      }
+    )
+    // {
       # What this flake publishes is built here and instantiated there. ES-DE installs the Modern
       # and Slate themes beside its MIT source, so an election that describes the output is
       # unfree, and nixpkgs refuses to instantiate it at all without a permit. This flake takes
       # none: the consumer's package set is the one that grants the allowance and resolves the
       # build, exactly as it does for every other unfree package it installs.
-      overlay =
-        final: prev:
+      overlays.default =
+        final: _prev:
         let
           es-de = final.stdenv.mkDerivation (finalAttrs: {
             inherit (pin) version;
@@ -60,9 +88,7 @@
                 pugixml
                 SDL2
               ])
-              ++ [
-                freeimage-for-es-de.packages.${final.stdenv.hostPlatform.system}.freeimage-for-es-de
-              ];
+              ++ [ freeimage-for-es-de.packages.${final.stdenv.hostPlatform.system}.freeimage-for-es-de ];
             cmakeFlags = [ (final.lib.cmakeBool "APPLICATION_UPDATER" false) ];
             meta = {
               description = "Emulator frontend for browsing and launching games from a unified interface";
@@ -85,7 +111,12 @@
               substituteInPlace CMake/Packages/FindPoppler.cmake \
                 --replace-fail 'GET_PREREQUISITES("''${POPPLER_LIBRARY}" POPPLER_PREREQS 1 0 "" "")' ""
             '';
-            src = final.fetchgit upstreamSource;
+            src = final.fetchgit {
+              fetchSubmodules = false;
+              hash = pin.sourceHash;
+              rev = pin.sourceRev;
+              url = "https://gitlab.com/${source.owner}/${source.repo}.git";
+            };
           });
 
           # A UserThemeDirectory containing a variant of the theme bundled with this exact ES-DE build.
@@ -110,36 +141,5 @@
           inherit es-de;
           inherit modern-es-de-covers;
         };
-    in
-    flake-lib.lib.eachDefaultSystem (
-      system:
-      let
-        pkgs = nixpkgs.legacyPackages.${system};
-        orgFormatting = flake-lib.lib.mkFormatting {
-          inherit self system;
-        };
-      in
-      {
-        checks.formatting = orgFormatting.check;
-        formatter = orgFormatting.formatter;
-        packages = {
-          # `update-version` evaluates `packages.default` on every run and the branch publisher
-          # builds it, so a bump needs a target here; the published packages cannot be
-          # instantiated in this flake without a permit. Realizing the pinned source is what a
-          # bump actually rewrites, so that is what this verifies.
-          default = pkgs.fetchgit upstreamSource;
-          update-branches = flake-lib.lib.mkUpdateBranches {
-            inherit pkgs source;
-            minimumTrackingVersion = "3.4.0";
-            pinSchema = "github";
-          };
-          update-version = flake-lib.lib.mkUpdateVersion {
-            inherit pkgs source;
-          };
-        };
-      }
-    )
-    // {
-      overlays.default = overlay;
     };
 }
