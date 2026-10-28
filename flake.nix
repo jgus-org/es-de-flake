@@ -38,15 +38,20 @@
         };
       in
       {
-        checks.formatting = orgFormatting.check;
+        checks =
+          let
+            checkPkgs = import nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+              overlays = [ self.overlays.default ];
+            };
+          in
+          {
+            inherit (checkPkgs) es-de modern-es-de-covers;
+            formatting = orgFormatting.check;
+          };
         formatter = orgFormatting.formatter;
         packages = {
-          # Nothing published here is a package anyone should install: `overlays.default` is the
-          # interface, and the derivations in it cannot be instantiated in this flake at all
-          # without an unfree allowance. This target exists because `update-version` evaluates
-          # `packages.default` on every run and the branch publisher builds it.
-          #TODO remove this
-          default = pkgs.emptyDirectory;
           update-branches = flake-lib.lib.mkUpdateBranches {
             inherit pkgs source;
             minimumTrackingVersion = "3.4.0";
@@ -63,7 +68,8 @@
       # and Slate themes beside its MIT source, so an election that describes the output is
       # unfree, and nixpkgs refuses to instantiate it at all without a permit. This flake takes
       # none: the consumer's package set is the one that grants the allowance and resolves the
-      # build, exactly as it does for every other unfree package it installs.
+      # build, exactly as it does for every other unfree package it installs. The one grant in this
+      # tree is inside `checks`, whose private package set reaches no consumer.
       overlays.default = final: _prev: rec {
         es-de = final.stdenv.mkDerivation (finalAttrs: {
           inherit (pin) version;
