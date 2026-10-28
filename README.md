@@ -4,10 +4,9 @@ A Nix flake that builds [ES-DE](https://es-de.org) (EmulationStation Desktop Edi
 
 ## Outputs
 
-| Attribute          | What you get                                                                                                                                                                                 |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `overlays.default` | Adds `es-de` and `modern-es-de-covers` to the nixpkgs package set it is applied to.                                                                                                          |
-| `packages.default` | Nothing to install: an empty derivation, present only because `update-version` evaluates and the branch publisher builds `packages.default`. Every artifact of ES-DE comes from the overlay. |
+| Attribute          | What you get                                                                        |
+| ------------------ | ----------------------------------------------------------------------------------- |
+| `overlays.default` | Adds `es-de` and `modern-es-de-covers` to the nixpkgs package set it is applied to. |
 
 ## Consuming
 
