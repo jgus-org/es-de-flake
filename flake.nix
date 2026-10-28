@@ -38,28 +38,18 @@
         };
       in
       {
-        checks = {
-          formatting = orgFormatting.check;
-          # The deliverable is the overlay, so nothing in `packages` materializes what this flake
-          # deploys. This builds both overlay attributes and discards them: the theme election
-          # patches the bundle taken from the installed ES-DE, so it fails when upstream's bundle no
-          # longer matches the patch, and the check beside it re-validates the result. The permit
-          # below belongs to this set alone -- this flake takes no licence on anyone's behalf, and a
-          # consumer of the overlay still carries their own.
-          overlay-payload =
-            let
-              checkPkgs = import nixpkgs {
-                inherit system;
-                config.allowUnfree = true;
-                overlays = [ self.overlays.default ];
-              };
-            in
-            checkPkgs.runCommand "es-de-overlay-payload" { } ''
-              test -x ${checkPkgs.es-de}/bin/es-de
-              test -d ${checkPkgs.modern-es-de-covers}/modern-es-de-covers
-              touch $out
-            '';
-        };
+        checks =
+          let
+            checkPkgs = import nixpkgs {
+              inherit system;
+              config.allowUnfree = true;
+              overlays = [ self.overlays.default ];
+            };
+          in
+          {
+            inherit (checkPkgs) es-de modern-es-de-covers;
+            formatting = orgFormatting.check;
+          };
         formatter = orgFormatting.formatter;
         packages = {
           update-branches = flake-lib.lib.mkUpdateBranches {
@@ -79,7 +69,7 @@
       # unfree, and nixpkgs refuses to instantiate it at all without a permit. This flake takes
       # none: the consumer's package set is the one that grants the allowance and resolves the
       # build, exactly as it does for every other unfree package it installs. The one grant in this
-      # tree is inside `checks.overlay-payload`, whose private package set reaches no consumer.
+      # tree is inside `checks`, whose private package set reaches no consumer.
       overlays.default = final: _prev: rec {
         es-de = final.stdenv.mkDerivation (finalAttrs: {
           inherit (pin) version;
