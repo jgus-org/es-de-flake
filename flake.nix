@@ -33,15 +33,42 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
-        inherit (pkgs) lib stdenv;
         orgFormatting = flake-lib.lib.mkFormatting {
           inherit self system;
         };
-
-        es-de = stdenv.mkDerivation (finalAttrs: {
+      in
+      {
+        checks.formatting = orgFormatting.check;
+        formatter = orgFormatting.formatter;
+        packages = {
+          # Nothing published here is a package anyone should install: `overlays.default` is the
+          # interface, and the derivations in it cannot be instantiated in this flake at all
+          # without an unfree allowance. This target exists because `update-version` evaluates
+          # `packages.default` on every run and the branch publisher builds it.
+          #TODO remove this
+          default = pkgs.emptyDirectory;
+          update-branches = flake-lib.lib.mkUpdateBranches {
+            inherit pkgs source;
+            minimumTrackingVersion = "3.4.0";
+            pinSchema = "github";
+          };
+          update-version = flake-lib.lib.mkUpdateVersion {
+            inherit pkgs source;
+          };
+        };
+      }
+    )
+    // {
+      # What this flake publishes is built here and instantiated there. ES-DE installs the Modern
+      # and Slate themes beside its MIT source, so an election that describes the output is
+      # unfree, and nixpkgs refuses to instantiate it at all without a permit. This flake takes
+      # none: the consumer's package set is the one that grants the allowance and resolves the
+      # build, exactly as it does for every other unfree package it installs.
+      overlays.default = final: _prev: rec {
+        es-de = final.stdenv.mkDerivation (finalAttrs: {
           inherit (pin) version;
           buildInputs =
-            (with pkgs; [
+            (with final; [
               alsa-lib
               bluez
               curl
@@ -55,16 +82,19 @@
               pugixml
               SDL2
             ])
-            ++ [ freeimage-for-es-de.packages.${system}.freeimage-for-es-de ];
-          cmakeFlags = [ (lib.cmakeBool "APPLICATION_UPDATER" false) ];
+            ++ [ freeimage-for-es-de.packages.${final.stdenv.hostPlatform.system}.freeimage-for-es-de ];
+          cmakeFlags = [ (final.lib.cmakeBool "APPLICATION_UPDATER" false) ];
           meta = {
             description = "Emulator frontend for browsing and launching games from a unified interface";
             homepage = "https://es-de.org";
-            license = lib.licenses.mit;
+            license = with final.lib.licenses; [
+              mit
+              cc-by-nc-sa-40
+            ];
             mainProgram = "es-de";
-            platforms = lib.platforms.linux;
+            platforms = final.lib.platforms.linux;
           };
-          nativeBuildInputs = with pkgs; [
+          nativeBuildInputs = with final; [
             cmake
             gettext
             pkg-config
@@ -75,7 +105,7 @@
             substituteInPlace CMake/Packages/FindPoppler.cmake \
               --replace-fail 'GET_PREREQUISITES("''${POPPLER_LIBRARY}" POPPLER_PREREQS 1 0 "" "")' ""
           '';
-          src = pkgs.fetchgit {
+          src = final.fetchgit {
             fetchSubmodules = false;
             hash = pin.sourceHash;
             rev = pin.sourceRev;
@@ -85,11 +115,12 @@
 
         # A UserThemeDirectory containing a variant of the theme bundled with this exact ES-DE build.
         modern-es-de-covers =
-          pkgs.runCommand "es-de-user-themes"
+          final.runCommand "es-de-user-themes"
             {
+              meta.license = final.lib.licenses.cc-by-nc-sa-40;
               nativeBuildInputs = [
-                pkgs.patch
-                pkgs.python3
+                final.patch
+                final.python3
               ];
             }
             ''
@@ -99,27 +130,6 @@
               patch --fuzz=0 -p1 < ${./modern-es-de-covers.patch}
               python ${./check-modern-theme.py} ${es-de}/share/es-de/themes/modern-es-de "$PWD"
             '';
-
-        updateVersion = flake-lib.lib.mkUpdateVersion {
-          inherit pkgs source;
-        };
-      in
-      {
-        checks = {
-          inherit modern-es-de-covers;
-          formatting = orgFormatting.check;
-        };
-        formatter = orgFormatting.formatter;
-        packages = {
-          inherit es-de modern-es-de-covers;
-          default = es-de;
-          update-branches = flake-lib.lib.mkUpdateBranches {
-            inherit pkgs source;
-            minimumTrackingVersion = "3.4.0";
-            pinSchema = "github";
-          };
-          update-version = updateVersion;
-        };
-      }
-    );
+      };
+    };
 }
