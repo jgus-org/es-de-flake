@@ -6,11 +6,11 @@
         "treefmt-nix": "treefmt-nix"
       },
       "locked": {
-        "lastModified": 1793122032,
-        "narHash": "sha256-W4SJJHuHfmzGkjlgXRb5G1lSRQixcEHn9jbFnEkdQts=",
+        "lastModified": 1793142493,
+        "narHash": "sha256-j/EwqJOXbWj9gCR+P1RrwLtflCa5fV+ReGGOj8FVmGg=",
         "owner": "jgus-org",
         "repo": "flake-lib",
-        "rev": "192adf6cabc5606d0bb3fcde0ae51dbbf1a37836",
+        "rev": "919c0e2d57e2466984b4c68bccde072c4e7a47f5",
         "type": "github"
       },
       "original": {
@@ -30,11 +30,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792867002,
-        "narHash": "sha256-yw6wcxB5v8+/tTDf4ss9bwvMW0BitnWMvZY8RyWwlgg=",
+        "lastModified": 1793142619,
+        "narHash": "sha256-eBATG4XQJ6dD1MV2PaQ0meGZAcubBkHGa/3AXI8MOaI=",
         "owner": "jgus-org",
         "repo": "freeimage-for-es-de-flake",
-        "rev": "401de8375ffba9ebc4477b610fb24b59a2aef389",
+        "rev": "7816a6be2d1efc2a00a7a52546f713ea8a7a7e24",
         "type": "github"
       },
       "original": {
