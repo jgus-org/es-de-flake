@@ -2,7 +2,10 @@
   description = "ES-DE (EmulationStation Desktop Edition); absent from nixpkgs. Built against the freeimage-for-es-de flake.";
 
   inputs = {
-    flake-lib.url = "github:jgus-org/flake-lib/v1";
+    flake-lib = {
+      inputs.nixpkgs.follows = "nixpkgs";
+      url = "github:jgus-org/flake-lib/v1";
+    };
     freeimage-for-es-de = {
       inputs = {
         flake-lib.follows = "flake-lib";
@@ -10,7 +13,7 @@
       };
       url = "github:jgus-org/freeimage-for-es-de-flake";
     };
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
   };
 
   outputs =
